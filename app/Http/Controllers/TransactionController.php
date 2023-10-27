@@ -32,7 +32,7 @@ class TransactionController extends Controller
      */
     public function create()
     {
-        //
+        return view('transactions.create');
     }
 
     /**
@@ -40,7 +40,21 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'amount' => 'required',
+            'type' => 'required',
+        ]);
+
+        $category = $validated['type'] == 'income' ? $request->category_income : $request->category_expense;
+
+        $transaction = Transaction::create([
+            'amount' => $validated['amount'],
+            'type' => $validated['type'],
+            'category' => $category,
+            'notes' => $request->notes,
+        ]);
+
+        return redirect()->route('transactions.index')->with(['message' => 'success']);
     }
 
     /**
@@ -48,7 +62,7 @@ class TransactionController extends Controller
      */
     public function show(Transaction $transaction)
     {
-        //
+        return view('transactions.show', compact('transaction'));
     }
 
     /**
@@ -56,7 +70,7 @@ class TransactionController extends Controller
      */
     public function edit(Transaction $transaction)
     {
-        //
+        return view('transactions.edit', compact('transaction'));
     }
 
     /**
@@ -64,7 +78,21 @@ class TransactionController extends Controller
      */
     public function update(Request $request, Transaction $transaction)
     {
-        //
+        $validated = $request->validate([
+            'amount' => 'required',
+            'type' => 'required',
+        ]);
+
+        $category = $validated['type'] == 'income' ? $request->category_income : $request->category_expense;
+
+        $transaction = $transaction->update([
+            'amount' => $validated['amount'],
+            'type' => $validated['type'],
+            'category' => $category,
+            'notes' => $request->notes,
+        ]);
+
+        return redirect()->route('transactions.index')->with(['message' => 'success']);
     }
 
     /**
@@ -72,6 +100,8 @@ class TransactionController extends Controller
      */
     public function destroy(Transaction $transaction)
     {
-        //
+        $transaction->delete();
+
+        return redirect()->route('transactions.index')->with(['message' => 'success']);
     }
 }

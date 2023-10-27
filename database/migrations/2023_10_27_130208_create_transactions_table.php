@@ -16,7 +16,7 @@ return new class extends Migration
             $table->float('amount')->default(0);
             $table->string('type');
             $table->string('category')->default('uncategorized');
-            $table->text('notes');
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }
